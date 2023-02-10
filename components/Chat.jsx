@@ -1,5 +1,6 @@
 import { Avatar, IconButton } from '@mui/material'
 import TimeAgo from 'timeago-react'
+import EmojiContainer from './EmojiContainer'
 import {
   MoreVert,
   AttachFile,
@@ -29,6 +30,7 @@ import getRecipientEmail from '../utils/getRecipientEmail'
 
 const Chat = ({ chat, messages, toggleView }) => {
   const [inputMessage, setInputMessage] = useState('')
+  const [emojiPicker, setEmojiPicker] = useState(false)
   const endOfMessageRef = useRef(null)
   const [user] = useAuthState(auth)
   const router = useRouter()
@@ -91,6 +93,10 @@ const Chat = ({ chat, messages, toggleView }) => {
     })
   }
 
+  const handleEmojiClick = (emojiData, event) => {
+    setInputMessage((message) => message + emojiData.emoji)
+  }
+
   const recipientEmail = getRecipientEmail(chat.users, user.email)
   const recipient = recipientSnapshot?.docs[0]?.data()
 
@@ -142,6 +148,13 @@ const Chat = ({ chat, messages, toggleView }) => {
         <EndOfMessage ref={endOfMessageRef} />
       </MessagesContainer>
 
+      {emojiPicker && (
+        <Emojie>
+          <EmojieWrapper>
+            <EmojiContainer handleEmojiClick={handleEmojiClick} />
+          </EmojieWrapper>
+        </Emojie>
+      )}
       <InputContainer>
         <InsertEmoticon />
         <MessageInput
@@ -176,13 +189,11 @@ const Header = styled.section`
   border-bottom: 1px solid whitesmoke;
 `
 const BackContainer = styled.div`
-  @media (max-width: 640px) {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    :active {
-      transform: scale(0.9);
-    }
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  :active {
+    transform: scale(0.9);
   }
 `
 const Back = styled(ArrowBack)`
@@ -233,4 +244,25 @@ const MessageInput = styled.input`
   padding: 15px;
   background-color: #e7e5e5;
   margin: 0 15px 0 15px;
+`
+
+const Emojie = styled.div`
+  width: 100%;
+  position: fixed;
+  bottom: 60px;
+  z-index: 50;
+`
+const EmojieWrapper = styled.div`
+  position: absolute;
+  z-index: 50;
+  width: 60%;
+  left: 8px;
+  bottom: 8px;
+  @media (min-width: 640px) {
+    width: 40%;
+  }
+`
+
+const Emoticon = styled(InsertEmoticon)`
+  cursor: pointer;
 `
