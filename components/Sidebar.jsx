@@ -9,7 +9,7 @@ import { useCollection } from 'react-firebase-hooks/firestore'
 import { addDoc, collection, query, where } from 'firebase/firestore'
 import ChatRow from './ChatRow'
 
-const Sidebar = ({ toggleSideChat, toggleView }) => {
+const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
   const [user] = useAuthState(auth)
   const mobileView = useMediaQuery('(max-width:640px)')
   const userChatRef = query(
@@ -70,6 +70,8 @@ const Sidebar = ({ toggleSideChat, toggleView }) => {
         {chatsSnapshot?.docs.map((chat) => (
           <ChatRow
             key={chat.id}
+            setChat={setChat}
+            setUserID={setUserID}
             toggleView={toggleView}
             id={chat.id}
             users={chat.data().users}

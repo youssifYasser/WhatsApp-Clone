@@ -28,15 +28,15 @@ import Message from './Message'
 import { useRef, useState } from 'react'
 import getRecipientEmail from '../utils/getRecipientEmail'
 
-const Chat = ({ chat, messages, toggleView }) => {
+const Chat = ({ chat, toggleView, userID }) => {
   const [inputMessage, setInputMessage] = useState('')
   const [emojiPicker, setEmojiPicker] = useState(false)
+
   const endOfMessageRef = useRef(null)
   const [user] = useAuthState(auth)
-  const router = useRouter()
   const [messagesSnapshot] = useCollection(
     query(
-      collection(db, 'chats', router.query.id, 'messages'),
+      collection(db, 'chats', userID, 'messages'),
       orderBy('timestamp', 'asc')
     )
   )
@@ -55,14 +55,14 @@ const Chat = ({ chat, messages, toggleView }) => {
 
     //add message
     const messageToSend = inputMessage.trim()
+    setInputMessage('')
     if (messageToSend !== '') {
-      await addDoc(collection(db, 'chats', router.query.id, 'messages'), {
+      await addDoc(collection(db, 'chats', userID, 'messages'), {
         message: messageToSend,
         user: user.email,
         userImg: user.photoURL,
         timestamp: serverTimestamp(),
       })
-      setInputMessage('')
       scrollToBottom()
     }
   }
@@ -78,10 +78,6 @@ const Chat = ({ chat, messages, toggleView }) => {
             timestamp: message.data().timestamp?.toDate().getTime(),
           }}
         />
-      ))
-    } else {
-      return messages?.map((message) => (
-        <Message key={message.id} user={message.user} message={message} />
       ))
     }
   }
@@ -189,11 +185,13 @@ const Header = styled.section`
   border-bottom: 1px solid whitesmoke;
 `
 const BackContainer = styled.div`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  :active {
-    transform: scale(0.9);
+  @media (max-width: 640px) {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    :active {
+      transform: scale(0.9);
+    }
   }
 `
 const Back = styled(ArrowBack)`
@@ -245,7 +243,6 @@ const MessageInput = styled.input`
   background-color: #e7e5e5;
   margin: 0 15px 0 15px;
 `
-
 const Emojie = styled.div`
   width: 100%;
   position: fixed;
