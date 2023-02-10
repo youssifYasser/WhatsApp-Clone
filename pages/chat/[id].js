@@ -5,20 +5,30 @@ import {
   getDocs,
   orderBy,
   query,
-  where,
 } from 'firebase/firestore'
+import { db } from '../../firebase'
+import { useState } from 'react'
 import styled from 'styled-components'
 import Chat from '../../components/Chat'
 import Sidebar from '../../components/Sidebar'
-import { db } from '../../firebase'
-import getRecipientEmail from '../../utils/getRecipientEmail'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 const ChatPage = ({ chat, messages }) => {
+  const [toggleSideChat, setToggleSideChat] = useState(false)
+  const mobileView = useMediaQuery('(max-width:640px)')
+
+  const toggleView = () => {
+    if (mobileView) {
+      setToggleSideChat(!toggleSideChat)
+    }
+  }
+
   return (
     <Container>
-      <Sidebar />
-      <ChatContainer>
+      <Sidebar toggleSideChat={toggleSideChat} toggleView={toggleView} />
+      <ChatContainer toggleSideChat={toggleSideChat} mobileView={mobileView}>
         <Chat
+          toggleView={toggleView}
           chat={chat}
           messages={messages}
           // recipientS={recipient}
@@ -74,6 +84,11 @@ const Container = styled.div`
 `
 
 const ChatContainer = styled.div`
+  display: ${(props) =>
+    props.mobileView ? (props.toggleSideChat ? 'block' : 'none') : 'block'};
+  @media (min-width: 640px) {
+    display: block;
+  }
   flex: 1;
   height: 100vh;
   overflow: auto;

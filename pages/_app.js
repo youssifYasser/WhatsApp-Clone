@@ -4,16 +4,16 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, db } from '../firebase'
 import LoginPage from './login'
 import { useEffect } from 'react'
-import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 
 export default function App({ Component, pageProps }) {
   const [user, loading] = useAuthState(auth)
 
   const setUserStatus = async () => {
-    await setDoc(doc(db, 'users', user.uid), {
-      email: user.email,
-      name: user.displayName,
-      userImg: user.photoURL,
+    await setDoc(doc(db, 'users', auth.currentUser.uid), {
+      email: auth.currentUser.email,
+      name: auth.currentUser.displayName,
+      userImg: auth.currentUser.photoURL,
       lastSeen: serverTimestamp(),
     })
   }
@@ -35,6 +35,7 @@ export default function App({ Component, pageProps }) {
           rel='icon'
           href='https://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png'
         />
+        <meta name='referrer' content='no-referrer' />
       </Head>
 
       <Component {...pageProps} />

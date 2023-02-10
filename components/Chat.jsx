@@ -1,6 +1,13 @@
 import { Avatar, IconButton } from '@mui/material'
 import TimeAgo from 'timeago-react'
-import { MoreVert, AttachFile, InsertEmoticon, Mic } from '@mui/icons-material'
+import {
+  MoreVert,
+  AttachFile,
+  InsertEmoticon,
+  Mic,
+  ArrowBack,
+} from '@mui/icons-material'
+
 import styled from 'styled-components'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, db } from '../firebase'
@@ -20,7 +27,7 @@ import Message from './Message'
 import { useRef, useState } from 'react'
 import getRecipientEmail from '../utils/getRecipientEmail'
 
-const Chat = ({ chat, messages }) => {
+const Chat = ({ chat, messages, toggleView }) => {
   const [inputMessage, setInputMessage] = useState('')
   const endOfMessageRef = useRef(null)
   const [user] = useAuthState(auth)
@@ -92,7 +99,10 @@ const Chat = ({ chat, messages }) => {
       <Header>
         {recipient ? (
           <>
-            <Avatar src={recipient.userImg} />
+            <BackContainer onClick={toggleView}>
+              <Back />
+              <Avatar src={recipient.userImg} />
+            </BackContainer>
             <HeaderInfo>
               <h3>{recipient.name}</h3>
               <p>
@@ -107,7 +117,10 @@ const Chat = ({ chat, messages }) => {
           </>
         ) : (
           <>
-            <Avatar>{recipientEmail[0]}</Avatar>
+            <BackContainer onClick={toggleView}>
+              <Back />
+              <Avatar>{recipientEmail[0]}</Avatar>
+            </BackContainer>
             <HeaderInfo>
               <h3>{recipientEmail}</h3>
               <p>Last active: Unavailable</p>
@@ -159,8 +172,26 @@ const Header = styled.section`
   position: sticky;
   top: 0;
   z-index: 10;
-  padding: 12px;
+  padding: 12px 10px;
   border-bottom: 1px solid whitesmoke;
+`
+const BackContainer = styled.div`
+  @media (max-width: 640px) {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    :active {
+      transform: scale(0.9);
+    }
+  }
+`
+const Back = styled(ArrowBack)`
+  margin-right: 5px;
+  font-size: 20px;
+  color: #424242;
+  @media (min-width: 640px) {
+    display: none;
+  }
 `
 const HeaderInfo = styled.div`
   flex: 1;
@@ -176,9 +207,12 @@ const HeaderInfo = styled.div`
 const HeaderIcons = styled.div``
 
 const MessagesContainer = styled.section`
-  padding: 30px;
+  padding: 20px 15px;
   min-height: 90vh;
   background-color: #e5ded8;
+  /* @media (min-width: 640px) {
+    padding: 25px;
+  } */
 `
 const EndOfMessage = styled.div``
 
@@ -197,6 +231,6 @@ const MessageInput = styled.input`
   border: none;
   border-radius: 20px;
   padding: 15px;
-  background-color: whitesmoke;
+  background-color: #e7e5e5;
   margin: 0 15px 0 15px;
 `

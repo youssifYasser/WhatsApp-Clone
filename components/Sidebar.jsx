@@ -1,4 +1,4 @@
-import { Avatar, Button, IconButton } from '@mui/material'
+import { Avatar, Button, IconButton, useMediaQuery } from '@mui/material'
 import { MoreVert, Chat, Search } from '@mui/icons-material'
 import styled from 'styled-components'
 import * as EmailValidator from 'email-validator'
@@ -9,8 +9,9 @@ import { useCollection } from 'react-firebase-hooks/firestore'
 import { addDoc, collection, query, where } from 'firebase/firestore'
 import ChatRow from './ChatRow'
 
-const Sidebar = () => {
+const Sidebar = ({ toggleSideChat, toggleView }) => {
   const [user] = useAuthState(auth)
+  const mobileView = useMediaQuery('(max-width:640px)')
   const userChatRef = query(
     collection(db, 'chats'),
     where('users', 'array-contains', user.email)
@@ -39,10 +40,10 @@ const Sidebar = () => {
   }
 
   return (
-    <Container>
+    <Container toggleSideChat={toggleSideChat} mobileView={mobileView}>
       {/* header */}
       <HeaderSection>
-        <Avatar src={user.photoURL} onClick={() => signOut(auth)} />
+        <UserAvatar src={user.photoURL} onClick={() => signOut(auth)} />
         <HeaderIcons>
           <IconButton>
             <Chat />
@@ -67,7 +68,12 @@ const Sidebar = () => {
       {/* chats */}
       <ChatsContainer>
         {chatsSnapshot?.docs.map((chat) => (
-          <ChatRow key={chat.id} id={chat.id} users={chat.data().users} />
+          <ChatRow
+            key={chat.id}
+            toggleView={toggleView}
+            id={chat.id}
+            users={chat.data().users}
+          />
         ))}
       </ChatsContainer>
     </Container>
@@ -77,19 +83,24 @@ const Sidebar = () => {
 export default Sidebar
 
 const Container = styled.div`
-  display: flex;
+  display: ${(props) =>
+    props.mobileView ? (props.toggleSideChat ? 'none' : 'flex') : 'flex'};
+  width: 100%;
   flex-direction: column;
   gap: 10px;
-  flex: 0.45;
-  /* min-width: 300px; */
   height: 100vh;
-  border-right: 1px solid whitesmoke;
   overflow-y: auto;
   ::-webkit-scrollbar {
     display: none;
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+  @media (min-width: 640px) {
+    //sm screen
+    flex: 0.45;
+    border-right: 1px solid whitesmoke;
+    min-width: 250px;
+  }
   @media (min-width: 1024px) {
     //lg screen
     max-width: 350px;
@@ -109,6 +120,9 @@ const HeaderSection = styled.section`
   top: 0;
   position: sticky;
   z-index: 10;
+`
+const UserAvatar = styled(Avatar)`
+  cursor: pointer;
 `
 const HeaderIcons = styled.div`
   display: flex;

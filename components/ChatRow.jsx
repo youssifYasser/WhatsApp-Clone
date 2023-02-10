@@ -1,4 +1,4 @@
-import { Avatar, Tooltip } from '@mui/material'
+import { Avatar, Tooltip, useMediaQuery } from '@mui/material'
 import { collection, query, where } from 'firebase/firestore'
 import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -8,9 +8,10 @@ import { auth, db } from '../firebase'
 import getRecipientEmail from '../utils/getRecipientEmail'
 import { useRouter } from 'next/router'
 
-const ChatRow = ({ id, users }) => {
+const ChatRow = ({ id, users, toggleView }) => {
   const router = useRouter()
   const [user] = useAuthState(auth)
+  const mobileView = useMediaQuery('(max-width:640px)')
   const [recipientSnapshot] = useCollection(
     query(
       collection(db, 'users'),
@@ -20,6 +21,10 @@ const ChatRow = ({ id, users }) => {
 
   const enterChat = () => {
     router.replace(`/chat/${id}`)
+
+    if (router.query.id && mobileView) {
+      toggleView()
+    }
   }
 
   const recipient = recipientSnapshot?.docs[0]?.data()
