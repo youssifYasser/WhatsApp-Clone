@@ -31,7 +31,6 @@ import getRecipientEmail from '../utils/getRecipientEmail'
 const Chat = ({ chat, toggleView, userID }) => {
   const [inputMessage, setInputMessage] = useState('')
   const [emojiPicker, setEmojiPicker] = useState(false)
-
   const endOfMessageRef = useRef(null)
   const [user] = useAuthState(auth)
   const [messagesSnapshot] = useCollection(
@@ -152,7 +151,7 @@ const Chat = ({ chat, toggleView, userID }) => {
         </Emojie>
       )}
       <InputContainer>
-        <InsertEmoticon />
+        <Emoticon onClick={() => setEmojiPicker(!emojiPicker)} />
         <MessageInput
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
