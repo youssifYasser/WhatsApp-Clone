@@ -1,15 +1,12 @@
 import { Avatar, Tooltip, useMediaQuery } from '@mui/material'
 import { collection, doc, getDoc, query, where } from 'firebase/firestore'
-import React from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollection } from 'react-firebase-hooks/firestore'
 import styled from 'styled-components'
 import { auth, db } from '../firebase'
 import getRecipientEmail from '../utils/getRecipientEmail'
-import { useRouter } from 'next/router'
 
 const ChatRow = ({ id, users, toggleView, setUserID, setChat }) => {
-  const router = useRouter()
   const [user] = useAuthState(auth)
   const mobileView = useMediaQuery('(max-width:640px)')
   const [recipientSnapshot] = useCollection(
@@ -64,6 +61,9 @@ const Container = styled.div`
   :hover {
     background-color: rgb(229 231 235);
     color: rgb(17 24 39);
+  }
+  :active {
+    pointer-events: none;
   }
 `
 const UserAvatar = styled(Avatar)``
