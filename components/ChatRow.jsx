@@ -62,9 +62,6 @@ const Container = styled.div`
     background-color: rgb(229 231 235);
     color: rgb(17 24 39);
   }
-  :active {
-    pointer-events: none;
-  }
 `
 const UserAvatar = styled(Avatar)``
 
@@ -72,4 +69,7 @@ const UserEmail = styled.p`
   font-size: 1rem;
   line-height: 1.5rem;
   word-break: break-all;
+  :active {
+    pointer-events: none;
+  }
 `
