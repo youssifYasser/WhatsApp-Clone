@@ -27,6 +27,7 @@ import {
 import Message from './Message'
 import { useRef, useState } from 'react'
 import getRecipientEmail from '../utils/getRecipientEmail'
+import Messages from './Messages'
 
 const Chat = ({ chat, toggleView, userID }) => {
   const [inputMessage, setInputMessage] = useState('')
@@ -138,10 +139,7 @@ const Chat = ({ chat, toggleView, userID }) => {
         </HeaderIcons>
       </Header>
 
-      <MessagesContainer>
-        {showMessages()}
-        <EndOfMessage ref={endOfMessageRef} />
-      </MessagesContainer>
+      <Messages showMessages={showMessages} endOfMessageRef={endOfMessageRef} />
 
       {emojiPicker && (
         <Emojie>
@@ -217,17 +215,6 @@ const HeaderInfo = styled.div`
   }
 `
 const HeaderIcons = styled.div``
-
-const MessagesContainer = styled.section`
-  padding: 20px 15px;
-  /* height: 100vh; */
-  flex: 1;
-  background-color: #e5ded8;
-  @media (min-width: 640px) {
-    padding: 25px;
-  }
-`
-const EndOfMessage = styled.div``
 
 const InputContainer = styled.form`
   display: flex;
