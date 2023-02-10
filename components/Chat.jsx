@@ -173,14 +173,16 @@ const Chat = ({ chat, toggleView, userID }) => {
 
 export default Chat
 
-const Container = styled.div``
+const Container = styled.div`
+  max-height: 100vh;
+`
 const Header = styled.section`
   background-color: white;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
   padding: 12px 10px;
   border-bottom: 1px solid whitesmoke;
 `
@@ -219,9 +221,9 @@ const MessagesContainer = styled.section`
   padding: 20px 15px;
   min-height: 90vh;
   background-color: #e5ded8;
-  /* @media (min-width: 640px) {
+  @media (min-width: 640px) {
     padding: 25px;
-  } */
+  }
 `
 const EndOfMessage = styled.div``
 
@@ -232,7 +234,7 @@ const InputContainer = styled.form`
   background-color: white;
   position: sticky;
   bottom: 0;
-  z-index: 10;
+  z-index: 20;
 `
 const MessageInput = styled.input`
   flex: 1;
