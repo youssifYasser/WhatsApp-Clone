@@ -173,7 +173,9 @@ const Chat = ({ chat, toggleView, userID }) => {
 export default Chat
 
 const Container = styled.div`
-  max-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 `
 const Header = styled.section`
   background-color: white;
@@ -218,7 +220,8 @@ const HeaderIcons = styled.div``
 
 const MessagesContainer = styled.section`
   padding: 20px 15px;
-  min-height: 90vh;
+  /* height: 100vh; */
+  flex: 1;
   background-color: #e5ded8;
   @media (min-width: 640px) {
     padding: 25px;
@@ -234,6 +237,7 @@ const InputContainer = styled.form`
   position: sticky;
   bottom: 0;
   z-index: 20;
+  max-height: fit-content;
 `
 const MessageInput = styled.input`
   flex: 1;
