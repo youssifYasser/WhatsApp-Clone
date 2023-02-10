@@ -7,6 +7,7 @@ import {
   InsertEmoticon,
   Mic,
   ArrowBack,
+  Send,
 } from '@mui/icons-material'
 
 import styled from 'styled-components'
@@ -55,7 +56,6 @@ const Chat = ({ chat, toggleView, userID }) => {
 
     //add message
     const messageToSend = inputMessage.trim()
-    setInputMessage('')
     if (messageToSend !== '') {
       await addDoc(collection(db, 'chats', userID, 'messages'), {
         message: messageToSend,
@@ -63,6 +63,7 @@ const Chat = ({ chat, toggleView, userID }) => {
         userImg: user.photoURL,
         timestamp: serverTimestamp(),
       })
+      setInputMessage('')
       scrollToBottom()
     }
   }
@@ -162,7 +163,7 @@ const Chat = ({ chat, toggleView, userID }) => {
         >
           send Message
         </button>
-        <Mic />
+        {inputMessage ? <SendBtn onClick={sendMessage} /> : <Mic />}
       </InputContainer>
     </Container>
   )
@@ -235,6 +236,13 @@ const MessageInput = styled.input`
   background-color: #e7e5e5;
   margin: 0 15px 0 15px;
 `
+const SendBtn = styled(Send)`
+  cursor: pointer;
+  :active {
+    transform: scale(0.9);
+  }
+`
+
 const Emojie = styled.div`
   width: 100%;
   position: fixed;
