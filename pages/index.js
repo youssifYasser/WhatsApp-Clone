@@ -57,6 +57,9 @@ export default function Home() {
 
 const Container = styled.div`
   display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 `
 const ChatContainer = styled.div`
   display: ${(props) =>

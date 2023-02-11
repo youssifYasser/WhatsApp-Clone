@@ -16,7 +16,9 @@ const MessagesContainer = styled.section`
   padding: 20px 15px;
   /* height: 100vh; */
   flex: 1;
-  background-color: #e5ded8;
+  /* background-color: #0b1216; */
+  background: url('/background.png') no-repeat;
+
   overflow-y: auto;
   @media (min-width: 640px) {
     padding: 25px;
