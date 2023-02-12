@@ -90,7 +90,7 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
       <HeaderSection>
         <Avatar src={user.photoURL} />
         <HeaderIcons>
-          <IconButton>
+          <IconButton onClick={() => setOpenModal(true)}>
             <ChatIcn />
           </IconButton>
           <IconButton
