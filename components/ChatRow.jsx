@@ -32,6 +32,7 @@ const ChatRow = ({ id, users, toggleView, setUserID, setChat }) => {
       unsubscribe()
     }
   }, [db])
+
   const enterChat = async () => {
     const chat = await getDoc(doc(db, 'chats', id))
     setChat({ id: chat.id, ...chat.data() })

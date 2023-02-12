@@ -69,19 +69,6 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
     )
   }
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: '#111b21',
-    color: '#c4d0d7',
-    border: '2px solid gray',
-    boxShadow: 24,
-    p: 4,
-  }
-
   return (
     <Container toggleSideChat={toggleSideChat} mobileView={mobileView}>
       {/* header */}
@@ -293,10 +280,17 @@ const InputEmail = styled.input`
 const CreateBtn = styled.button`
   padding: 8px;
   background-color: #2a3942;
-  border: 1px solid #2a3942;
+  border: 2px solid #2a3942;
   cursor: pointer;
   color: #c4d0d7;
   border-radius: 2px;
   align-self: flex-end;
   /* border: none; */
+  transition: background-color 0.2s ease-out;
+  :hover {
+    background-color: #4a616f;
+  }
+  :active {
+    background-color: transparent;
+  }
 `

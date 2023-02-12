@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 
 const Messages = ({ showMessages, endOfMessageRef }) => {
@@ -16,6 +15,7 @@ const MessagesContainer = styled.section`
   padding: 20px 15px;
   flex: 1;
   background: url('/background.webp') no-repeat;
+  background-size: cover;
 
   overflow-y: auto;
   @media (min-width: 640px) {

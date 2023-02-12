@@ -23,12 +23,12 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-height:100vh;
   background: url('/background.webp') no-repeat;
+  background-size: cover;
 `
 
 const Logo = styled(Image)`
-  object-fit: cover;
+  object-fit: contain;
   margin-bottom: 30px;
   margin-top: -40px;
   width: 170px;

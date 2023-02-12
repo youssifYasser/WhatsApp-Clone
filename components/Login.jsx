@@ -19,6 +19,7 @@ const Login = ({ loading }) => {
         placeItems: 'center',
         height: '100vh',
         background: 'url(/background.webp) no-repeat',
+        backgroundSize: 'cover',
       }}
     >
       <Head>
