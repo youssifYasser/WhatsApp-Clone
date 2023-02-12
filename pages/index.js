@@ -1,11 +1,12 @@
 import Sidebar from '../components/Sidebar'
 import styled from 'styled-components'
 import Landing from '../components/Landing'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Chat from '../components/Chat'
 import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore'
 import { useMediaQuery } from '@mui/material'
-import { db } from '../firebase'
+import { app, db } from '../firebase'
+import { getAuth } from 'firebase/auth'
 
 export default function Home() {
   const [userID, setUserID] = useState('')
@@ -19,15 +20,6 @@ export default function Home() {
     }
   }
 
-  // const getChat = async () => {
-  //   const chat = await getDoc(doc(db, 'chats', userID))
-  //   setChat({ id: chat.id, ...chat.data() })
-  // }
-  // useEffect(() => {
-  //   if (userID) {
-  //     getChat()
-  //   }
-  // }, [userID])
   return (
     <Container>
       <Sidebar
@@ -55,11 +47,17 @@ export default function Home() {
   )
 }
 
+export const getServerSideProps = async (context) => {
+  const auth = getAuth(app)
+  console.log('auth=> ', auth.currentUser)
+
+  return {
+    props: {},
+  }
+}
+
 const Container = styled.div`
   display: flex;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
 `
 const ChatContainer = styled.div`
   display: ${(props) =>

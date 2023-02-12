@@ -14,10 +14,8 @@ export default Messages
 
 const MessagesContainer = styled.section`
   padding: 20px 15px;
-  /* height: 100vh; */
   flex: 1;
-  /* background-color: #0b1216; */
-  background: url('/background.png') no-repeat;
+  background: url('/background.webp') no-repeat;
 
   overflow-y: auto;
   @media (min-width: 640px) {

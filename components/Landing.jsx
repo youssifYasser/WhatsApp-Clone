@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 import LockIcon from '@mui/icons-material/Lock'
+import Image from 'next/image'
 
 const Landing = () => {
   return (
     <Container>
-      <Logo src='/logo.png' />
+      <Logo width={400} height={400} loading='eager' src='/logo.png' />
       <Title>WhatsApp</Title>
       <DescContaiener>
         <Lock />
@@ -25,7 +26,7 @@ const Container = styled.div`
   background: url('/background.png') no-repeat;
 `
 
-const Logo = styled.img`
+const Logo = styled(Image)`
   object-fit: cover;
   margin-bottom: 30px;
   margin-top: -40px;
@@ -38,9 +39,7 @@ const Logo = styled.img`
 `
 
 const Title = styled.h1`
-  font-size: 2.7rem /* 48px */;
-  line-height: 1;
-  font-weight: 500;
+  font-weight: 400;
   color: #aebac1;
 
   letter-spacing: 0.025em;
