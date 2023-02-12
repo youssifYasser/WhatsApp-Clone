@@ -32,6 +32,7 @@ import Messages from './Messages'
 
 const Chat = ({ chat, toggleView, userID }) => {
   const [inputMessage, setInputMessage] = useState('')
+  const inputMessageRef = useRef(null)
   const [emojiPicker, setEmojiPicker] = useState(false)
   const endOfMessageRef = useRef(null)
   const [user] = useAuthState(auth)
@@ -45,6 +46,7 @@ const Chat = ({ chat, toggleView, userID }) => {
     await updateDoc(doc(db, 'users', user.uid), { lastSeen: serverTimestamp() })
 
     //add message
+
     const messageToSend = inputMessage.trim()
     if (messageToSend !== '') {
       await addDoc(collection(db, 'chats', userID, 'messages'), {
@@ -60,6 +62,8 @@ const Chat = ({ chat, toggleView, userID }) => {
 
   //get messages
   useEffect(() => {
+    inputMessageRef.current.focus()
+    setInputMessage('')
     const unsubscribe = onSnapshot(
       query(
         collection(db, 'chats', userID, 'messages'),
@@ -115,7 +119,6 @@ const Chat = ({ chat, toggleView, userID }) => {
   }
 
   const recipientEmail = getRecipientEmail(chat.users, user.email)
-
   return (
     <Container>
       <Header>
@@ -172,6 +175,7 @@ const Chat = ({ chat, toggleView, userID }) => {
         <Emoticon onClick={() => setEmojiPicker(!emojiPicker)} />
         <MessageInput
           placeholder='Type a message'
+          ref={inputMessageRef}
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
         />
