@@ -32,7 +32,7 @@ import Messages from './Messages'
 
 const Chat = ({ chat, toggleView, userID }) => {
   const [inputMessage, setInputMessage] = useState('')
-  const inputMessageRef = useRef(null)
+  const inputMessageRef = useRef()
   const [emojiPicker, setEmojiPicker] = useState(false)
   const endOfMessageRef = useRef(null)
   const [user] = useAuthState(auth)
