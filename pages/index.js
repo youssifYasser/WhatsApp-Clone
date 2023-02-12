@@ -3,9 +3,8 @@ import styled from 'styled-components'
 import Landing from '../components/Landing'
 import { useState } from 'react'
 import Chat from '../components/Chat'
-import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore'
 import { useMediaQuery } from '@mui/material'
-import { app, db } from '../firebase'
+import { app } from '../firebase'
 import { getAuth } from 'firebase/auth'
 
 export default function Home() {
@@ -45,15 +44,6 @@ export default function Home() {
       )}
     </Container>
   )
-}
-
-export const getServerSideProps = async (context) => {
-  const auth = getAuth(app)
-  console.log('auth=> ', auth.currentUser)
-
-  return {
-    props: {},
-  }
 }
 
 const Container = styled.div`
