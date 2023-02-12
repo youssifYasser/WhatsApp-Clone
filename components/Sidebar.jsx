@@ -3,11 +3,17 @@ import {
   Box,
   Button,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  MenuList,
   Modal,
+  Paper,
   Typography,
   useMediaQuery,
 } from '@mui/material'
-import { MoreVert, Chat, Search } from '@mui/icons-material'
+import { MoreVert, Chat, Search, Logout } from '@mui/icons-material'
 import styled from 'styled-components'
 import * as EmailValidator from 'email-validator'
 import { signOut } from 'firebase/auth'
@@ -27,8 +33,17 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
   const [user] = useAuthState(auth)
   const mobileView = useMediaQuery('(max-width:640px)')
   const [chats, setChats] = useState([])
-  const [open, setOpen] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   const inputEmailRef = useRef(null)
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const openMenu = Boolean(anchorEl)
+  const handleClickMenu = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleCloseMenu = () => {
+    setAnchorEl(null)
+  }
 
   //get user chats
   useEffect(() => {
@@ -47,7 +62,7 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
 
   const createChat = (e) => {
     e.preventDefault()
-    setOpen(false)
+    setOpenModal(false)
     const input = inputEmailRef.current.value
     console.log(input)
 
@@ -73,14 +88,53 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
     <Container toggleSideChat={toggleSideChat} mobileView={mobileView}>
       {/* header */}
       <HeaderSection>
-        <UserAvatar src={user.photoURL} onClick={() => signOut(auth)} />
+        <Avatar src={user.photoURL} />
         <HeaderIcons>
           <IconButton>
             <ChatIcn />
           </IconButton>
-          <IconButton>
+          <IconButton
+            id='more-button'
+            onClick={handleClickMenu}
+            aria-controls={openMenu ? 'basic-menu' : undefined}
+            aria-haspopup='true'
+            aria-expanded={openMenu ? 'true' : undefined}
+          >
             <MoreVertIcn />
           </IconButton>
+
+          <StyledMenu
+            id='basic-menu'
+            anchorEl={anchorEl}
+            open={openMenu}
+            onClose={handleCloseMenu}
+            MenuListProps={{
+              'aria-labelledby': 'more-button',
+            }}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuList>
+              <Item>
+                <ListItemIcon>
+                  <Avatar src={user.photoURL} />
+                </ListItemIcon>
+                <ListItemText>{user.displayName}</ListItemText>
+              </Item>
+              <Item type='logout' onClick={() => signOut(auth)}>
+                <ListItem>
+                  <Logout />
+                </ListItem>
+                <ListItemText>Logout</ListItemText>
+              </Item>
+            </MenuList>
+          </StyledMenu>
         </HeaderIcons>
       </HeaderSection>
 
@@ -93,10 +147,12 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
       </SearchSection>
 
       {/* start chat button */}
-      <SidebarBtn onClick={() => setOpen(true)}>start a new chat</SidebarBtn>
+      <SidebarBtn onClick={() => setOpenModal(true)}>
+        start a new chat
+      </SidebarBtn>
       <Modal
-        open={open}
-        onClose={() => setOpen(false)}
+        open={openModal}
+        onClose={() => setOpenModal(false)}
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
@@ -169,16 +225,14 @@ const HeaderSection = styled.section`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  z-index: 10;
   padding: 12px;
   background-color: #202c33;
   top: 0;
   height: 65px;
-  position: sticky;
-  z-index: 10;
 `
-const UserAvatar = styled(Avatar)`
-  cursor: pointer;
-`
+
 const HeaderIcons = styled.div`
   display: flex;
   gap: 8px;
@@ -292,5 +346,32 @@ const CreateBtn = styled.button`
   }
   :active {
     background-color: transparent;
+  }
+`
+
+const StyledMenu = styled(Menu)`
+  .MuiMenu-paper {
+    background-color: #202c33;
+    color: #aebac1;
+  }
+`
+const ListItem = styled(ListItemIcon)`
+  border-radius: 100%;
+  background-color: #e5e7eb;
+  padding: 8px;
+`
+
+const Item = styled(MenuItem)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: ${(props) => (props.type === 'logout' ? 'pointer' : 'default')};
+  gap: 10px;
+  &:hover,
+  &.Mui-focusVisible {
+    background-color: #111b21;
+    ${ListItem} {
+      background-color: #d1d5db;
+    }
   }
 `
