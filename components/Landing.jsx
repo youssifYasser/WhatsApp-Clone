@@ -5,7 +5,7 @@ import Image from 'next/image'
 const Landing = () => {
   return (
     <Container>
-      <Logo width={400} height={400} loading='eager' src='/logo.png' />
+      <Logo width={200} height={200} loading='eager' src='/logo.webp' />
       <Title>WhatsApp</Title>
       <DescContaiener>
         <Lock />
@@ -23,7 +23,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: url('/background.png') no-repeat;
+  background: url('/background.webp') no-repeat;
 `
 
 const Logo = styled(Image)`
