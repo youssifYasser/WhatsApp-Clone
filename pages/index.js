@@ -4,7 +4,7 @@ import Landing from '../components/Landing'
 import { useState } from 'react'
 import Chat from '../components/Chat'
 import { useMediaQuery } from '@mui/material'
-import { app } from '../firebase'
+import { app, auth } from '../firebase'
 import { getAuth } from 'firebase/auth'
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
       setToggleSideChat(!toggleSideChat)
     }
   }
-
+  // console.log(auth.currentUser.uid)
   return (
     <Container>
       <Sidebar

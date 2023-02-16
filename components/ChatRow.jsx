@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import styled from 'styled-components'
 import { auth, db } from '../firebase'
-import getRecipientEmail from '../utils/getRecipientEmail'
+import getRecipientData from '../utils/getRecipientData'
 
 const ChatRow = ({ id, users, toggleView, setUserID, setChat }) => {
   const [user] = useAuthState(auth)
@@ -20,12 +20,22 @@ const ChatRow = ({ id, users, toggleView, setUserID, setChat }) => {
 
   //get recipient
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(
-        collection(db, 'users'),
-        where('email', '==', getRecipientEmail(users, user.email))
-      ),
-      (snapshot) => setRecipient(snapshot.docs[0]?.data())
+    const recipientQuery =
+      user.providerData[0].providerId === 'phone'
+        ? query(
+            collection(db, 'users'),
+            where(
+              'phoneNumber',
+              '==',
+              getRecipientData(users, user.phoneNumber)
+            )
+          )
+        : query(
+            collection(db, 'users'),
+            where('email', '==', getRecipientData(users, user.email))
+          )
+    const unsubscribe = onSnapshot(recipientQuery, (snapshot) =>
+      setRecipient(snapshot.docs[0]?.data())
     )
 
     return () => {
@@ -39,25 +49,27 @@ const ChatRow = ({ id, users, toggleView, setUserID, setChat }) => {
     setUserID(id)
     // router.replace(`/chat/${id}`)
 
-    if (mobileView) {
-      toggleView()
-    }
+    toggleView()
   }
 
-  const recipientEmail = getRecipientEmail(users, user.email)
+  const recipientData =
+    user.providerData[0].providerId === 'phone'
+      ? getRecipientData(users, user.phoneNumber)
+      : getRecipientData(users, user.email)
+
   return (
     <Container onClick={enterChat}>
       {recipient ? (
         <>
           <UserAvatar src={recipient?.userImg} />
-          <Tooltip title={recipientEmail} placement='top-end' arrow>
+          <Tooltip title={recipientData} placement='top-end' arrow>
             <UserEmail>{recipient?.name}</UserEmail>
           </Tooltip>
         </>
       ) : (
         <>
-          <UserAvatar>{recipientEmail[0]}</UserAvatar>
-          <UserEmail>{recipientEmail}</UserEmail>
+          <UserAvatar>{recipientData[3] + recipientData[4]}</UserAvatar>
+          <UserEmail>{recipientData}</UserEmail>
         </>
       )}
     </Container>

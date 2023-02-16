@@ -8,7 +8,11 @@ const Message = ({ user, message }) => {
   const [userLoggedIn] = useAuthState(auth)
   const [showMessage, setShowMessage] = useState(false)
 
-  const TypeOfMessage = user === userLoggedIn.email ? Sender : Reciever
+  const userData =
+    userLoggedIn.providerData[0].providerId === 'phone'
+      ? userLoggedIn.phoneNumber
+      : userLoggedIn.email
+  const TypeOfMessage = user === userData ? Sender : Reciever
 
   return (
     <Container>

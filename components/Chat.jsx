@@ -27,7 +27,7 @@ import {
 } from 'firebase/firestore'
 import Message from './Message'
 import { useEffect, useRef, useState } from 'react'
-import getRecipientEmail from '../utils/getRecipientEmail'
+import getRecipientData from '../utils/getRecipientData'
 import Messages from './Messages'
 
 const Chat = ({ chat, toggleView, userID }) => {
@@ -49,9 +49,13 @@ const Chat = ({ chat, toggleView, userID }) => {
 
     const messageToSend = inputMessage.trim()
     if (messageToSend !== '') {
+      const userData =
+        user.providerData[0].providerId === 'phone'
+          ? user.phoneNumber
+          : user.email
       await addDoc(collection(db, 'chats', userID, 'messages'), {
         message: messageToSend,
-        user: user.email,
+        user: userData,
         userImg: user.photoURL,
         timestamp: serverTimestamp(),
       })
@@ -79,12 +83,22 @@ const Chat = ({ chat, toggleView, userID }) => {
 
   //get recipient
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(
-        collection(db, 'users'),
-        where('email', '==', getRecipientEmail(chat.users, user.email))
-      ),
-      (snapshot) => setRecipient(snapshot.docs[0]?.data())
+    const recipientQuery =
+      user.providerData[0].providerId === 'phone'
+        ? query(
+            collection(db, 'users'),
+            where(
+              'phoneNumber',
+              '==',
+              getRecipientData(chat.users, user.phoneNumber)
+            )
+          )
+        : query(
+            collection(db, 'users'),
+            where('email', '==', getRecipientData(chat.users, user.email))
+          )
+    const unsubscribe = onSnapshot(recipientQuery, (snapshot) =>
+      setRecipient(snapshot.docs[0]?.data())
     )
 
     return () => {
@@ -118,7 +132,10 @@ const Chat = ({ chat, toggleView, userID }) => {
     setInputMessage((message) => message + emojiData.emoji)
   }
 
-  const recipientEmail = getRecipientEmail(chat.users, user.email)
+  const recipientData =
+    user.providerData[0].providerId === 'phone'
+      ? getRecipientData(chat.users, user.phoneNumber)
+      : getRecipientData(chat.users, user.email)
   return (
     <Container>
       <Header>
@@ -144,10 +161,10 @@ const Chat = ({ chat, toggleView, userID }) => {
           <>
             <BackContainer onClick={toggleView}>
               <Back />
-              <Avatar>{recipientEmail[0]}</Avatar>
+              <Avatar>{recipientData[3] + recipientData[4]}</Avatar>
             </BackContainer>
             <HeaderInfo>
-              <h3>{recipientEmail}</h3>
+              <h3>{recipientData}</h3>
               <p>Last active: Unavailable</p>
             </HeaderInfo>
           </>

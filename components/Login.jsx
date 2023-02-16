@@ -1,17 +1,18 @@
 import { Button } from '@mui/material'
-import { signInWithPopup } from 'firebase/auth'
 import Head from 'next/head'
 import styled from 'styled-components'
-import { auth, provider } from '../firebase'
 import CircularProgress from '@mui/material/CircularProgress'
 import Image from 'next/image'
 import logoImg from '../public/logo.webp'
+import { useState } from 'react'
+import SignInWithPhone from './SignInWithPhone'
 
-const Login = ({ loading }) => {
-  const handleSignIn = () => {
-    signInWithPopup(auth, provider).catch(alert)
+const Login = ({ loading, handleSignInEmail, setLoadApp }) => {
+  const [signPhone, setSignPhone] = useState(false)
+
+  const handleSignInPhone = () => {
+    setSignPhone(true)
   }
-
   return (
     <Container
       style={{
@@ -40,18 +41,31 @@ const Login = ({ loading }) => {
           gap: '30px',
         }}
       >
-        <LogoImg src={logoImg} width={250} height={250} alt='WhatsApp logo' />
-        {loading ? (
-          <CircularProgress color='success' />
+        {signPhone ? (
+          <SignInWithPhone
+            setSignPhone={setSignPhone}
+            setLoadApp={setLoadApp}
+          />
         ) : (
           <>
-            <SignInButton
-              loading={loading}
-              onClick={handleSignIn}
-              variant='outlined'
-            >
-              Sign in with Google
-            </SignInButton>
+            <LogoImg
+              src={logoImg}
+              width={250}
+              height={250}
+              alt='WhatsApp logo'
+            />
+            {loading ? (
+              <CircularProgress color='success' />
+            ) : (
+              <ButtonContainer>
+                <SignInButton onClick={handleSignInEmail} variant='outlined'>
+                  Sign in with Google
+                </SignInButton>
+                <SignInButton onClick={handleSignInPhone} variant='outlined'>
+                  Sign in with Phone number
+                </SignInButton>
+              </ButtonContainer>
+            )}
           </>
         )}
       </LoginContainer>
@@ -87,4 +101,9 @@ const SignInButton = styled(Button)`
     background-color: #8696a0;
     color: #111b21;
   }
+`
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `

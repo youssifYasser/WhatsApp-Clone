@@ -3,8 +3,14 @@ import '../styles/globals.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, db } from '../firebase'
 import LoginPage from './login'
-import { useEffect } from 'react'
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore'
 import { Roboto } from '@next/font/google'
 
 const roboto = Roboto({
@@ -13,23 +19,37 @@ const roboto = Roboto({
 })
 export default function App({ Component, pageProps }) {
   const [user, loading] = useAuthState(auth)
+  const [loadApp, setLoadApp] = useState(true)
 
   const setUserStatus = async () => {
-    await setDoc(doc(db, 'users', auth.currentUser.uid), {
-      email: auth.currentUser.email,
-      name: auth.currentUser.displayName,
-      userImg: auth.currentUser.photoURL,
-      lastSeen: serverTimestamp(),
-    })
+    if (user.providerData[0].providerId === 'google.com') {
+      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+        email: auth.currentUser.email,
+        name: auth.currentUser.displayName,
+        userImg: auth.currentUser.photoURL,
+        lastSeen: serverTimestamp(),
+      })
+    }
+    if (user.providerData[0].providerId === 'phone') {
+      await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+        lastSeen: serverTimestamp(),
+      })
+    }
   }
   useEffect(() => {
     if (user) {
       setUserStatus()
+    } else if (loading) {
+      setLoadApp(true)
+    } else {
+      console.log('false load app')
+      setLoadApp(false)
     }
   }, [user])
 
   if (loading) return <LoginPage loading />
-  if (!user) return <LoginPage />
+  if (!user || !loadApp) return <LoginPage setLoadApp={setLoadApp} />
+
   return (
     <main className={roboto.className}>
       <Head>

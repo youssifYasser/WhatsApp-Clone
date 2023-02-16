@@ -5,7 +5,13 @@ import Image from 'next/image'
 const Landing = () => {
   return (
     <Container>
-      <Logo width={200} height={200} loading='eager' src='/logo.webp' />
+      <Logo
+        width={200}
+        height={200}
+        loading='eager'
+        alt='whatsapp logo'
+        src='/logo.webp'
+      />
       <Title>WhatsApp</Title>
       <DescContaiener>
         <Lock />
