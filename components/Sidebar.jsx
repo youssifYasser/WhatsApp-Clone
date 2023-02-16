@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuList,
   Modal,
+  Paper,
   Typography,
   useMediaQuery,
 } from '@mui/material'
@@ -21,26 +22,19 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import {
   addDoc,
   collection,
-  doc,
   onSnapshot,
   query,
   where,
 } from 'firebase/firestore'
 import ChatRow from './ChatRow'
 import { useEffect, useRef, useState } from 'react'
-import { MuiTelInput } from 'mui-tel-input'
-import phone from 'phone'
 
 const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
   const [user] = useAuthState(auth)
-  const [userData, setUserData] = useState({})
   const mobileView = useMediaQuery('(max-width:640px)')
   const [chats, setChats] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const inputEmailRef = useRef(null)
-
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [phoneInfo, setPhoneInfo] = useState(null)
 
   const [anchorEl, setAnchorEl] = useState(null)
   const openMenu = Boolean(anchorEl)
@@ -72,15 +66,10 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
 
   //get user chats
   useEffect(() => {
-    const querySearch =
-      user.providerData[0].providerId === 'phone'
-        ? user.phoneNumber
-        : user.email
-
     const unsubscribe = onSnapshot(
       query(
         collection(db, 'chats'),
-        where('users', 'array-contains', querySearch)
+        where('users', 'array-contains', user.email)
       ),
       (snapshot) => setChats(snapshot.docs)
     )
@@ -93,52 +82,32 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
   const createChat = (e) => {
     e.preventDefault()
     setOpenModal(false)
+    const input = inputEmailRef.current.value
+    console.log(input)
 
-    if (user.providerData[0].providerId === 'phone') {
-      if (
-        phone(phoneInfo.numberValue).isValid &&
-        !chatAlreadyExists(phoneInfo.numberValue) &&
-        phoneInfo.numberValue !== user.phoneNumber
-      ) {
-        addDoc(collection(db, 'chats'), {
-          users: [user.phoneNumber, phoneInfo.numberValue],
-        })
-      } else {
-        return
-      }
-      setPhoneNumber('')
-    } else if (user.providerData[0].providerId === 'google.com') {
-      const input = inputEmailRef.current.value
+    if (!input) return
 
-      if (!input) return
-
-      if (
-        EmailValidator.validate(input) &&
-        !chatAlreadyExists(input) &&
-        input !== user.email
-      ) {
-        addDoc(collection(db, 'chats'), { users: [user.email, input] })
-      }
+    if (
+      EmailValidator.validate(input) &&
+      !chatAlreadyExists(input) &&
+      input !== user.email
+    ) {
+      addDoc(collection(db, 'chats'), { users: [user.email, input] })
     }
   }
 
-  const chatAlreadyExists = (recipientData) => {
+  const chatAlreadyExists = (recipientEmail) => {
     return !!chats?.find(
       (chat) =>
-        chat.data().users.find((user) => user === recipientData)?.length > 0
+        chat.data().users.find((user) => user === recipientEmail)?.length > 0
     )
-  }
-
-  const handlePhoneNumberChange = (phonNum, info) => {
-    setPhoneNumber(phonNum)
-    setPhoneInfo(info)
   }
 
   return (
     <Container toggleSideChat={toggleSideChat} mobileView={mobileView}>
       {/* header */}
       <HeaderSection>
-        <Avatar src={userData.userImg} />
+        <Avatar src={user.photoURL} />
         <HeaderIcons>
           <IconButton onClick={() => setOpenModal(true)}>
             <ChatIcn />
@@ -173,9 +142,9 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
             <MenuList>
               <Item>
                 <ListItemIcon>
-                  <Avatar src={userData.userImg} />
+                  <Avatar src={user.photoURL} />
                 </ListItemIcon>
-                <ListItemText>{userData.name}</ListItemText>
+                <ListItemText>{user.displayName}</ListItemText>
               </Item>
               <Item type='logout' onClick={() => signOut(auth)}>
                 <ListItem>
@@ -215,22 +184,7 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
             to chat with
           </Typography>
           <InputForm>
-            {user.providerData[0].providerId === 'phone' ? (
-              <MuiTelInput
-                required
-                label='Phone number'
-                placeholder='enter phone number'
-                defaultCountry='EG'
-                value={phoneNumber}
-                onChange={handlePhoneNumberChange}
-              />
-            ) : (
-              <InputEmail
-                type='email'
-                ref={inputEmailRef}
-                placeholder='email'
-              />
-            )}
+            <InputEmail type='email' ref={inputEmailRef} placeholder='email' />
             <CreateBtn type='submit' onClick={createChat}>
               Create
             </CreateBtn>
