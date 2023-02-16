@@ -68,11 +68,7 @@ const ChatRow = ({ id, users, toggleView, setUserID, setChat }) => {
         </>
       ) : (
         <>
-          <UserAvatar>
-            {user.providerData[0].providerId === 'phone'
-              ? recipientData[3] + recipientData[4]
-              : recipientData[0]}
-          </UserAvatar>
+          <UserAvatar>{recipientData[3] + recipientData[4]}</UserAvatar>
           <UserEmail>{recipientData}</UserEmail>
         </>
       )}

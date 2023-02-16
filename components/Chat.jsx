@@ -161,11 +161,7 @@ const Chat = ({ chat, toggleView, userID }) => {
           <>
             <BackContainer onClick={toggleView}>
               <Back />
-              <Avatar>
-                {user.providerData[0].providerId === 'phone'
-                  ? recipientData[3] + recipientData[4]
-                  : recipientData[0]}
-              </Avatar>
+              <Avatar>{recipientData[3] + recipientData[4]}</Avatar>
             </BackContainer>
             <HeaderInfo>
               <h3>{recipientData}</h3>

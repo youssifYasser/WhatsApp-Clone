@@ -62,7 +62,7 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
         : query(collection(db, 'users'), where('email', '==', user.email))
 
     const unsubscribe = onSnapshot(userQuery, (snapshot) => {
-      setUserData(snapshot.docs[0]?.data())
+      setUserData({ ...snapshot.docs[0]?.data() })
     })
 
     return () => {
@@ -208,11 +208,7 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
       >
         <BoxDiv>
           <Typography id='transition-modal-title' variant='h6' component='h2'>
-            Please enter{' '}
-            {user.providerData[0].providerId === 'phone'
-              ? 'phone number'
-              : 'email'}{' '}
-            to chat with
+            Please enter email to chat with
           </Typography>
           <InputForm>
             {user.providerData[0].providerId === 'phone' ? (
@@ -241,17 +237,18 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
       {/* chats */}
       <ChatsContainer>
         {chats?.map((chat, index) => (
-          <div key={chat.id}>
+          <>
             <ChatRow
               key={chat.id}
               setChat={setChat}
               setUserID={setUserID}
               toggleView={toggleView}
               id={chat.id}
+              userData={userData}
               users={chat.data().users}
             />
             {index !== chats.length - 1 && <Border />}
-          </div>
+          </>
         ))}
       </ChatsContainer>
     </Container>
