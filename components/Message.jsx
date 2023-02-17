@@ -38,14 +38,14 @@ const Container = styled.div``
 
 const MessageElement = styled.p`
   width: fit-content;
-  min-width: 60px;
+  min-width: 3.75rem;
   max-width: 80%;
-  padding: 15px 15px 26px 15px;
-  border-radius: 8px;
-  margin: 10px;
+  padding: 0.938rem 0.938rem 1.625rem 0.938rem;
+  border-radius: 0.5rem;
+  margin: 0.625rem;
   position: relative;
   text-align: right;
-  font-size: 13px;
+  font-size: 0.813rem;
   word-break: break-word;
   text-align: left;
   color: #e9edef;
@@ -61,7 +61,7 @@ const MessageElement = styled.p`
 const More = styled.span`
   text-decoration-line: underline;
   cursor: pointer;
-  margin-left: 4px;
+  margin-left: 0.25rem;
   color: #cbcfd2;
   display: ${(props) => (props.showMessage === true ? 'none' : 'inline')};
 `
@@ -79,8 +79,8 @@ const Reciever = styled(MessageElement)`
 
 const Timestamp = styled.span`
   color: #e9edef;
-  padding: 10px;
-  font-size: 9px;
+  padding: 0.625rem;
+  font-size: 0.563rem;
   position: absolute;
   text-align: right;
   bottom: 0;

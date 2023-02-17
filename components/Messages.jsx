@@ -12,18 +12,18 @@ const Messages = ({ showMessages, endOfMessageRef }) => {
 export default Messages
 
 const MessagesContainer = styled.section`
-  padding: 20px 15px;
+  padding: 1.25rem 0.938rem;
   flex: 1;
   background: url('/background.webp') no-repeat;
   background-size: cover;
 
   overflow-y: auto;
   @media (min-width: 640px) {
-    padding: 25px;
+    padding: 1.563rem;
   }
   ::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
+    width: 0.375rem !important;
+    height: 0.375rem !important;
   }
   ::-webkit-scrollbar-thumb {
     background-color: gray;

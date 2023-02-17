@@ -1,4 +1,4 @@
-import { Avatar, IconButton } from '@mui/material'
+import { Avatar, IconButton, useMediaQuery } from '@mui/material'
 import TimeAgo from 'timeago-react'
 import EmojiContainer from './EmojiContainer'
 import {
@@ -38,6 +38,7 @@ const Chat = ({ chat, toggleView, userID }) => {
   const [user] = useAuthState(auth)
   const [messages, setMessages] = useState([])
   const [recipient, setRecipient] = useState([])
+  const mobileView = useMediaQuery('(max-width:640px)')
 
   const sendMessage = async (e) => {
     e.preventDefault()
@@ -122,15 +123,21 @@ const Chat = ({ chat, toggleView, userID }) => {
   }
 
   const scrollToBottom = () => {
-    endOfMessageRef.current.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
+    setTimeout(() => {
+      endOfMessageRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
+    }, 50)
   }
 
   const handleEmojiClick = (emojiData, event) => {
     setInputMessage((message) => message + emojiData.emoji)
   }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [chat])
 
   const recipientData =
     user.providerData[0].providerId === 'phone'
@@ -146,7 +153,11 @@ const Chat = ({ chat, toggleView, userID }) => {
               <Avatar src={recipient.userImg} />
             </BackContainer>
             <HeaderInfo>
-              <h3>{recipient.name}</h3>
+              <h3>
+                {mobileView
+                  ? recipient.name.slice(0, recipient.name.indexOf(' '))
+                  : recipient.name}
+              </h3>
               <p>
                 Last active:{' '}
                 {recipient?.lastSeen?.toDate() ? (
@@ -168,7 +179,11 @@ const Chat = ({ chat, toggleView, userID }) => {
               </Avatar>
             </BackContainer>
             <HeaderInfo>
-              <h3>{recipientData}</h3>
+              <h3>
+                {mobileView
+                  ? recipientData.slice(0, recipientData.indexOf('@'))
+                  : recipientData}
+              </h3>
               <p>Last active: Unavailable</p>
             </HeaderInfo>
           </>
@@ -227,9 +242,9 @@ const Header = styled.section`
   position: sticky;
   top: 0;
   z-index: 20;
-  padding: 12px 10px;
+  padding: 0.75rem 0.625rem;
   border-bottom: 1px solid #1c262c;
-  height: 65px;
+  height: 4.063rem;
   background-color: #202c33;
 `
 const BackContainer = styled.div`
@@ -243,8 +258,8 @@ const BackContainer = styled.div`
   }
 `
 const Back = styled(ArrowBack)`
-  margin-right: 5px;
-  font-size: 20px;
+  margin-right: 0.313rem;
+  font-size: 1.25rem;
   color: #aebac1;
   @media (min-width: 640px) {
     display: none;
@@ -256,11 +271,11 @@ const HeaderInfo = styled.div`
   > h3 {
     color: white;
     text-align: left;
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
     font-weight: 500;
   }
   > p {
-    font-size: 13px;
+    font-size: 0.812rem;
     color: #a6a6a6;
   }
 `
@@ -276,7 +291,7 @@ const MoreVertIcn = styled(MoreVert)`
 const InputContainer = styled.form`
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 0.625rem 0.938rem;
   background-color: #202c33;
   position: sticky;
   bottom: 0;
@@ -287,12 +302,12 @@ const MessageInput = styled.input`
   flex: 1;
   outline: 0;
   border: none;
-  border-radius: 8px;
-  padding: 15px;
+  border-radius: 0.5rem;
+  padding: 0.938rem;
   font-size: 100%;
   background-color: #2a3942;
   color: #aebac1;
-  margin: 0 15px 0 15px;
+  margin: 0 0.938rem 0 0.938rem;
 `
 
 const SendBtn = styled(Send)`
@@ -310,14 +325,14 @@ const MicIcn = styled(Mic)`
 const Emojie = styled.div`
   width: 100%;
   position: fixed;
-  bottom: 60px;
+  bottom: 3.75rem;
   z-index: 50;
 `
 const EmojieWrapper = styled.div`
   position: absolute;
   z-index: 50;
   width: 60%;
-  left: 8px;
+  left: 0.5rem;
   bottom: 8px;
   @media (min-width: 640px) {
     width: 40%;
