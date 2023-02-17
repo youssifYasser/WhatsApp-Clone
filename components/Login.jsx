@@ -36,7 +36,7 @@ const Login = ({ loading, handleSignInEmail, setLoadApp }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          padding: '50px',
+          padding: signPhone ? '20px 30px' : '50px',
           backgroundColor: '#111b21',
           gap: '30px',
         }}

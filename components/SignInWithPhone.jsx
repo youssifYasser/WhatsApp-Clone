@@ -1,5 +1,18 @@
-import { Box, CircularProgress, TextField } from '@mui/material'
-import CameraAltIcon from '@mui/icons-material/CameraAlt'
+import {
+  Box,
+  CircularProgress,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material'
+import {
+  ArrowBack,
+  DeleteForever,
+  CameraAltOutlined,
+} from '@mui/icons-material'
+
+// import CameraAltOutlined from '@mui/icons-material/CameraAltOutlined'
+
 import {
   addDoc,
   collection,
@@ -128,52 +141,63 @@ const SignInWithPhone = ({ setSignPhone, setLoadApp }) => {
     if (registerSteps === 'otp') {
       if (OTP.length === 6) {
         let confirmationResult = window.confirmationResult
-        confirmationResult
-          .confirm(OTP)
-          .then(async (result) => {
-            await setDoc(
-              doc(db, 'users', result.user.uid),
-              {
-                lastSeen: serverTimestamp(),
-                name: userData.name,
-                phoneNumber: userData.phone,
-              },
-              { merge: true }
-            ).then(async (document) => {
-              if (selectedImage) {
-                setLoading(true)
-                const imageRef = ref(storage, `users/${result.user.uid}/image`)
-                await uploadString(imageRef, selectedImage, 'data_url').then(
-                  async (snapshot) => {
-                    const downloadUrl = await getDownloadURL(imageRef)
-                    await updateDoc(doc(db, 'users', result.user.uid), {
-                      userImg: downloadUrl,
-                    })
-                    // setUserData({ ...userData, userImg: downloadUrl })
-                  }
-                )
-                setLoading(false)
-              }
-              // auth.currentUser.displayName = userData.name
-              // auth.currentUser.photoURL = userData.userImg
-              //   ? userData.userImg
-              //   : undefined
-              setLoadApp(true)
+        if (confirmationResult) {
+          confirmationResult
+            .confirm(OTP)
+            .then(async (result) => {
+              await setDoc(
+                doc(db, 'users', result.user.uid),
+                {
+                  lastSeen: serverTimestamp(),
+                  name: userData.name,
+                  phoneNumber: userData.phone,
+                },
+                { merge: true }
+              ).then(async (document) => {
+                if (selectedImage) {
+                  setLoading(true)
+                  const imageRef = ref(
+                    storage,
+                    `users/${result.user.uid}/image`
+                  )
+                  await uploadString(imageRef, selectedImage, 'data_url').then(
+                    async (snapshot) => {
+                      const downloadUrl = await getDownloadURL(imageRef)
+                      await updateDoc(doc(db, 'users', result.user.uid), {
+                        userImg: downloadUrl,
+                      })
+                      // setUserData({ ...userData, userImg: downloadUrl })
+                    }
+                  )
+                  setLoading(false)
+                }
+                setLoadApp(true)
+              })
             })
-          })
-          .catch(alert)
-      } else {
-        setError(true)
+            .catch(alert)
+        } else {
+          setError(true)
+        }
       }
     }
   }
 
   return (
     <Container>
-      <h3 style={{ marginBottom: '15px' }}>Sign in with phone number</h3>
+      <BackContainer>
+        <Tooltip title='Go to main Login menu' placement='top' arrow>
+          <Back onClick={() => setSignPhone(false)} />
+        </Tooltip>
+        <Typography variant='h6' component='h2'>
+          Sign in with phone number
+        </Typography>
+      </BackContainer>
+
       <Box
-        component='form'
+        component='div'
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
           '& .MuiTextField-root': {
             m: 1,
           },
@@ -183,7 +207,7 @@ const SignInWithPhone = ({ setSignPhone, setLoadApp }) => {
       >
         <div>
           {/* phone number */}
-          <MuiTelInput
+          <TelInput
             required
             disabled={registerSteps !== 'phone'}
             error={registerSteps === 'phone' && error}
@@ -196,98 +220,90 @@ const SignInWithPhone = ({ setSignPhone, setLoadApp }) => {
 
           {/* if the user is not already registered */}
           {/* name and profile picture */}
-          {registerSteps === 'data' && (
-            <>
-              {/* name */}
-              <TextField
-                label='Name'
-                required
-                disabled={registerSteps !== 'data'}
-                error={registerSteps === 'data' && error}
-                value={nameInput}
-                onChange={(e) => {
-                  setNameInput(e.target.value)
-                }}
-              />
-              {!selectedImage ? (
-                <>
-                  {/* upload profile picture  */}
-                  <div
-                    className='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 cursor-pointer'
-                    onClick={() => filePickerRef.current.click()}
-                  >
-                    <CameraAltIcon
-                      className='h-6 w-6 text-red-600'
-                      aria-hidden='true'
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type='file'
-                      accept='image/*'
-                      ref={filePickerRef}
-                      onChange={addImageRegisteration}
-                      hidden
-                    />
-                  </div>
-                </>
-              ) : (
-                // user uploaded profile picture
-                <div className='filter hover:brightness-90 transition-all duration-150'>
-                  <Image
-                    src={selectedImage}
-                    alt='profile image'
-                    width={200}
-                    height={200}
-                    style={{
-                      width: '200px',
-                      height: '200px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  {!loading && (
-                    <p
-                      onClick={() => setSelectedImage(null)}
-                      className='text-red-600 font-medium cursor-pointer '
-                    >
-                      Remove
-                    </p>
-                  )}
-                </div>
-              )}
-            </>
-          )}
+          <DataContainer>
+            {registerSteps === 'data' && (
+              <>
+                {/* name */}
+                <InfoTextField
+                  label='Name'
+                  required
+                  disabled={registerSteps !== 'data'}
+                  error={registerSteps === 'data' && error}
+                  value={nameInput}
+                  onChange={(e) => {
+                    setNameInput(e.target.value)
+                  }}
+                />
+                <ProfileContainer>
+                  <ProfileWrapper>
+                    {!selectedImage ? (
+                      <>
+                        {/* upload profile picture  */}
+                        <UploadProfileContainer
+                          onClick={() => filePickerRef.current.click()}
+                        >
+                          <CameraIcon
+                            className='h-6 w-6 text-red-600'
+                            aria-hidden='true'
+                          />
 
-          {/* after entering phone number*, name*, profile picture  */}
-          {/* confirming the sent OTP  */}
-          {registerSteps === 'otp' && (
-            <TextField
-              label='OTP'
-              type='number'
-              error={registerSteps === 'otp' && error}
-              value={OTP}
-              onChange={(e) => {
-                setOTP(e.target.value)
-              }}
-              required
-            />
-          )}
+                          <div>
+                            <input
+                              type='file'
+                              accept='image/*'
+                              ref={filePickerRef}
+                              onChange={addImageRegisteration}
+                              hidden
+                            />
+                          </div>
+                        </UploadProfileContainer>
+                      </>
+                    ) : (
+                      // user uploaded profile picture
+                      <ProfileImage
+                        src={selectedImage}
+                        alt='profile image'
+                        width={200}
+                        height={200}
+                      />
+                    )}
+                  </ProfileWrapper>
+                  {!loading && selectedImage && (
+                    <RemoveProfileBtn onClick={() => setSelectedImage(null)}>
+                      <DeleteForever />
+                    </RemoveProfileBtn>
+                  )}
+                </ProfileContainer>
+              </>
+            )}
+
+            {/* after entering phone number*, name*, profile picture  */}
+            {/* confirming the sent OTP  */}
+            {registerSteps === 'otp' && (
+              <InfoTextField
+                label='OTP'
+                type='number'
+                error={registerSteps === 'otp' && error}
+                value={OTP}
+                onChange={(e) => {
+                  setOTP(e.target.value)
+                }}
+                required
+              />
+            )}
+          </DataContainer>
         </div>
 
         {/* Button */}
 
         {!loading ? (
-          <button
-            type='submit'
-            style={{ cursor: 'pointer' }}
-            onClick={handleRegisteration}
-          >
+          <RegisterBtn type='submit' onClick={handleRegisteration}>
             {registerSteps === 'phone' && 'Sign In'}
             {registerSteps === 'data' && 'Request OTP'}
             {registerSteps === 'otp' && 'Register'}
-          </button>
+          </RegisterBtn>
         ) : (
-          <CircularProgress color='success' />
+          <CircularProgress style={{ alignSelf: 'center' }} color='success' />
         )}
 
         <div id='recaptcha-verifier'></div>
@@ -301,21 +317,128 @@ export default SignInWithPhone
 const Container = styled.form`
   display: flex;
   flex-direction: column;
+  .MuiFormControl-root {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .MuiFormLabel-root {
+    color: #96a0a5dd;
+  }
+
+  .Mui-focused {
+    color: #c4d0d7;
+  }
+  .MuiInputBase-root {
+    color: #c4d0d7;
+    background-color: #2a3942;
+    border-radius: 8px;
+  }
 `
 
-const Label = styled.label`
-  display: block;
-  margin-bottom: 1.25rem /* 20px */;
+const BackContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 `
-const Span = styled.span`
-  color: rgb(55 65 81);
+
+const Back = styled(ArrowBack)`
+  margin-right: 5px;
+  font-size: 20px;
+  color: #aebac1;
+  :active {
+    transform: scale(0.9);
+  }
+  /* @media (min-width: 640px) {
+    display: none;
+  } */
 `
-const Input = styled.input`
-  display: block;
+
+const TelInput = styled(MuiTelInput)`
+  margin-top: 12px;
   width: 100%;
-  border: 1px solid gray;
-  padding-top: 0.5rem /* 8px */;
-  padding-bottom: 0.5rem /* 8px */;
-  margin-top: 0.25rem /* 4px */;
-  border-radius: 0.25rem /* 4px */;
+`
+
+const DataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+`
+
+const ProfileWrapper = styled.div`
+  background-color: black;
+  height: 100px;
+  width: 100px;
+  border-radius: 100%;
+`
+const ProfileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+`
+
+const UploadProfileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  background-color: #4f5a61;
+  cursor: pointer;
+  transition: background-color 0.2s ease-out;
+  :hover {
+    background-color: #313b42;
+  }
+`
+
+const ProfileImage = styled(Image)`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 100%;
+`
+
+const RemoveProfileBtn = styled.p`
+  color: #dc2626;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease-out;
+
+  :hover {
+    transform: scale(1.1);
+  }
+  :active {
+    transform: scale(0.9);
+  }
+`
+
+const CameraIcon = styled(CameraAltOutlined)`
+  color: #c4d0d7;
+  font-size: 40px;
+`
+
+const InfoTextField = styled(TextField)`
+  width: 100%;
+`
+
+const RegisterBtn = styled.button`
+  padding: 8px;
+  background-color: #2a3942;
+  border: 2px solid #2a3942;
+  cursor: pointer;
+  margin-top: 20px;
+  color: #c4d0d7;
+  border-radius: 2px;
+  align-self: flex-end;
+  /* border: none; */
+  transition: background-color 0.2s ease-out;
+  :hover {
+    background-color: #4a616f;
+  }
+  :active {
+    background-color: transparent;
+  }
 `

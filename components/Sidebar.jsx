@@ -21,7 +21,6 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import {
   addDoc,
   collection,
-  doc,
   onSnapshot,
   query,
   where,
@@ -216,7 +215,7 @@ const Sidebar = ({ toggleSideChat, toggleView, setUserID, setChat }) => {
           </Typography>
           <InputForm>
             {user.providerData[0].providerId === 'phone' ? (
-              <MuiTelInput
+              <TelInput
                 required
                 label='Phone number'
                 placeholder='enter phone number'
@@ -399,6 +398,22 @@ const InputEmail = styled.input`
   outline: none;
   font-size: 16px;
   border: 1px solid #2a3942;
+`
+
+const TelInput = styled(MuiTelInput)`
+  .MuiFormLabel-root {
+    color: #96a0a5dd;
+  }
+
+  .Mui-focused {
+    color: #c4d0d7;
+  }
+  .MuiInputBase-root {
+    color: #c4d0d7;
+    background-color: #2a3942;
+    border-radius: 8px;
+  }
+  margin-top: 12px;
 `
 const CreateBtn = styled.button`
   padding: 8px;
