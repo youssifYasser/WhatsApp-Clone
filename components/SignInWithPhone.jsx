@@ -10,9 +10,6 @@ import {
   DeleteForever,
   CameraAltOutlined,
 } from '@mui/icons-material'
-
-// import CameraAltOutlined from '@mui/icons-material/CameraAltOutlined'
-
 import {
   addDoc,
   collection,
@@ -162,11 +159,16 @@ const SignInWithPhone = ({ setSignPhone, setLoadApp }) => {
                   )
                   await uploadString(imageRef, selectedImage, 'data_url').then(
                     async (snapshot) => {
-                      const downloadUrl = await getDownloadURL(imageRef)
-                      await updateDoc(doc(db, 'users', result.user.uid), {
-                        userImg: downloadUrl,
+                      await getDownloadURL(imageRef).then(async (imgUrl) => {
+                        imgUrl = imgUrl.replace(
+                          'https://firebasestorage.googleapis.com/v0/b/whatsapp-clone-3dabe.appspot.com',
+                          'https://ik.imagekit.io/whatsappClone'
+                        )
+
+                        await updateDoc(doc(db, 'users', result.user.uid), {
+                          userImg: imgUrl,
+                        })
                       })
-                      // setUserData({ ...userData, userImg: downloadUrl })
                     }
                   )
                   setLoading(false)
@@ -283,6 +285,7 @@ const SignInWithPhone = ({ setSignPhone, setLoadApp }) => {
               <InfoTextField
                 label='OTP'
                 type='number'
+                disabled={loading}
                 error={registerSteps === 'otp' && error}
                 value={OTP}
                 onChange={(e) => {

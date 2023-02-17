@@ -5,7 +5,11 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    domains: ['assets.stickpng.com', 'lh3.googleusercontent.com'],
+    domains: [
+      'assets.stickpng.com',
+      'lh3.googleusercontent.com',
+      'ik.imagekit.io',
+    ],
   },
 }
 
