@@ -10,7 +10,7 @@ const EmojiContainer = ({ handleEmojiClick }) => {
     <EmojiPicker
       onEmojiClick={handleEmojiClick}
       autoFocusSearch={false}
-      theme={Theme.LIGHT}
+      theme={Theme.DARK}
       height={350}
       width='100%'
       lazyLoadEmojis={true}
