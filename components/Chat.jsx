@@ -242,9 +242,9 @@ const Header = styled.section`
   position: sticky;
   top: 0;
   z-index: 20;
-  padding: 0.75rem 0.625rem;
+  padding: 0.75rem 1.2rem;
+  height: 2.5rem;
   border-bottom: 1px solid #1c262c;
-  height: 4.063rem;
   background-color: #202c33;
 `
 const BackContainer = styled.div`
@@ -291,7 +291,7 @@ const MoreVertIcn = styled(MoreVert)`
 const InputContainer = styled.form`
   display: flex;
   align-items: center;
-  padding: 0.625rem 0.938rem;
+  padding: 1rem 0.938rem 1rem 1.25rem;
   background-color: #202c33;
   position: sticky;
   bottom: 0;
