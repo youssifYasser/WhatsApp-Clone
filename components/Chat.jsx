@@ -155,7 +155,7 @@ const Chat = ({ chat, toggleView, userID }) => {
             <HeaderInfo>
               <h3>
                 {mobileView
-                  ? recipient.name.slice(0, recipient.name.indexOf(' '))
+                  ? recipient?.name?.slice(0, recipient.name.indexOf(' '))
                   : recipient.name}
               </h3>
               <p>
@@ -181,7 +181,7 @@ const Chat = ({ chat, toggleView, userID }) => {
             <HeaderInfo>
               <h3>
                 {mobileView
-                  ? recipientData.slice(0, recipientData.indexOf('@'))
+                  ? recipientData?.slice(0, recipientData.indexOf('@'))
                   : recipientData}
               </h3>
               <p>Last active: Unavailable</p>
